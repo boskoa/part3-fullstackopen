@@ -1,6 +1,13 @@
 const express = require('express')
+const morgan = require('morgan')
 
 const app = express()
+
+app.use(express.json())
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :fso'))
+morgan.token('fso', (req) => {
+  return JSON.stringify(req.body)
+})
 
 let persons = [
   { 
@@ -24,6 +31,8 @@ let persons = [
     "number": "39-23-6423122"
   }
 ]
+
+const generateId = () => Math.floor(Math.random() * 1000)
 
 app.get('/api/persons', (request, response) => response.json(persons))
 
@@ -51,5 +60,27 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
+app.post('/api/persons', (request, response) => {
+  const newPerson = {
+    name: request.body.name,
+    number: request.body.number,
+    id: generateId()
+  }
+  if (!(newPerson.name && newPerson.number)) {
+    return response.status(400).json({ error: "content missing"})
+  }
+  else if (persons.find(person => person.name === newPerson.name)) {
+    return response.status(400).json({ error: "name must be unique" })
+  }
+  persons = persons.concat(newPerson)
+  response.json(newPerson)
+})
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint"})
+}
+
+app.use(unknownEndpoint)
+
 const PORT = 3001
-app.listen(PORT)
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`))

@@ -13,8 +13,15 @@ mongoose.connect(url)
   })
   
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    unique: true,
+    minLength: 3
+  },
+  number: {
+    type: String,
+    minLength: 8
+  }
 })
   
 personSchema.set('toJSON', {
@@ -24,25 +31,5 @@ personSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
-/*
-if (process.argv.length === 3) {
-  Person.find({}).then(result => {
-    result.forEach(person => {
-      console.log(person)
-    })
-    mongoose.connection.close()
-  })
-}
-  
-if (process.argv.length === 5) {
-  const person = new Person({
-    name: process.argv[3],
-    number: process.argv[4],
-  })
-  person.save().then(result => {
-    console.log(`Added ${result.name} number ${result.number} to the phonebook`)
-    mongoose.connection.close()
-  })
-}
-*/
+
 module.exports = mongoose.model('Person', personSchema)

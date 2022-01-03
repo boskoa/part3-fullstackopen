@@ -19,7 +19,7 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/api/info', (request, response) => {
-  const count = Person.find({}).then(result => {
+  Person.find({}).then(result => {
     response.send(
       `<p>Phonebook has info for ${result.length} people.</p><p>${new Date()}</p>`
     )
@@ -59,7 +59,7 @@ app.post('/api/persons', (request, response, next) => {
   })
 
   if (!(newPerson.name && newPerson.number)) {
-    return response.status(400).json({ error: "content missing"})
+    return response.status(400).json({ error: 'content missing' })
   }
 
   newPerson.save()
@@ -84,14 +84,14 @@ app.put('/api/persons/:id', (request, response, next) => {
 })
 
 const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: "unknown endpoint"})
+  response.status(404).send({ error: 'unknown endpoint' })
 }
 
 app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id'})
+    return response.status(400).send({ error: 'malformatted id' })
   }
   else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })

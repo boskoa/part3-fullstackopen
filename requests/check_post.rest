@@ -1,7 +1,7 @@
-POST https://glacial-mesa-24211.herokuapp.com/api/persons/
+POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "Bob Rock",
+    "name": "Bananaman",
     "number": "654-21314684"
 }
